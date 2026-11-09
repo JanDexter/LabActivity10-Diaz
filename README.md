@@ -1,58 +1,125 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Barangay Bulletin – Purok Diaz
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel blog application for the Barangay Matina Crossing Hall where barangay officials publish announcements and residents can browse, search, and page through posts.
 
-## About Laravel
+## About This Project
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This is Lab Activity 10 for Full-Stack Web Development (4-334) at Ateneo de Davao University. The project demonstrates working with Laravel's Eloquent ORM, migrations, seeders, and pagination to build a functional bulletin board.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Personalization
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Site Title**: Barangay Bulletin – Purok Diaz
+- **Kagawad**: Jan Dexter Diaz (kagawad.diaz@bulletin.test)
+- **Pinned Post**: "Purok Diaz Clean-up Drive" (published January 23, 2026 — the Kagawad's birthday)
+- **Posts Per Page**: 6 (since "Diaz" has 4 letters, the minimum of 6 is used)
+- **Custom Category**: Livelihood (in addition to Announcement, Health, Peace & Order, and Ayuda)
 
-## Learning Laravel
+## Setup & Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Prerequisites
+- PHP 8.5+
+- Composer
+- Node.js & npm
+- SQLite (or use the database file that will be created)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Installation Steps
 
 ```bash
-composer require laravel/boost --dev
+# Clone the repository
+git clone <repository-url>
+cd LabActivity10-Diaz
 
-php artisan boost:install
+# Install PHP dependencies
+composer install
+
+# Copy the environment file
+cp .env.example .env
+
+# Generate the application key
+php artisan key:generate
+
+# Create the SQLite database and run migrations with seeds
+php artisan migrate:fresh --seed
+
+# Install Node dependencies
+npm install
+
+# Build frontend assets (Tailwind CSS + Vite)
+npm run build
+
+# Start the Laravel development server
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Visit `http://localhost:8000` in your browser. The app redirects `/` to `/posts`.
 
-## Contributing
+To run the dev server with hot reload:
+```bash
+npm run dev
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Key Features
 
-## Code of Conduct
+- **Browse Posts**: View all published posts sorted by pinned status and publication date
+- **Search**: Filter posts by title using the search input
+- **Filter by Category**: Filter posts by one of five categories
+- **Pagination**: 6 posts per page with query string preservation (search and filter persist across pages)
+- **View Counter**: Each post tracks and displays the number of views
+- **Pinned Posts**: Special styling for pinned announcements (Purok Diaz Clean-up Drive)
+- **Draft Posts**: Drafts are not visible to residents (404 error if accessed directly)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Database Schema
 
-## Security Vulnerabilities
+### Authors Table
+- `id` (primary key)
+- `name` (string) — e.g., "Kagawad Jan Dexter Diaz"
+- `position` (string) — e.g., "Kagawad", "Barangay Secretary"
+- `email` (string, unique) — e.g., "kagawad.diaz@bulletin.test"
+- `timestamps` (created_at, updated_at)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Posts Table
+- `id` (primary key)
+- `author_id` (foreign key → authors.id, cascade on delete)
+- `title` (string)
+- `category` (string) — one of: Announcement, Health, Peace & Order, Ayuda, Livelihood
+- `body` (text)
+- `is_published` (boolean, default: false)
+- `is_pinned` (boolean, default: false)
+- `published_at` (timestamp, nullable)
+- `views` (unsigned integer, default: 0) — added by separate migration
+- `timestamps` (created_at, updated_at)
 
-## License
+## Seeding
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+After running `php artisan migrate:fresh --seed`, the database contains:
+
+- **5 Authors**: 1 Kagawad (created by hand) + 4 random officials
+- **51 Posts**: 40 published, 10 drafts, plus the pinned "Purok Diaz Clean-up Drive" post
+
+## Testing in Tinker
+
+To verify Eloquent ORM functionality (ActiveRecord pattern):
+
+```bash
+php artisan tinker
+>>> $post = App\Models\Post::find(1);
+>>> $post->title = 'Updated Title';
+>>> $post->save();
+>>> App\Models\Post::find(1)->title  // Shows the updated title
+```
+
+Screenshot of this workflow is saved in `docs/tinker.png`.
+
+## Technology Stack
+
+- **Backend**: Laravel 12 with Eloquent ORM
+- **Frontend**: Blade templates + Tailwind CSS v4
+- **Database**: SQLite
+- **Package Manager**: Composer (PHP), npm (Node)
+
+## Notes
+
+- No user authentication is required for this lab
+- Relationships (hasMany/belongsTo) are deferred to Week 11; this app uses author IDs
+- All output is escaped with `{{ }}` for security
+- The app uses Laravel's built-in pagination views, styled with Tailwind
