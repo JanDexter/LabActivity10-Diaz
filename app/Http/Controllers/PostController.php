@@ -36,7 +36,7 @@ class PostController extends Controller
     /**
      * Drafts are filtered out first so findOrFail() gives a 404 for them too.
      */
-    public function show(int $id): View
+    public function show(string $id): View
     {
         $post = Post::query()->where('is_published', true)->findOrFail($id);
 
