@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1 class="text-2xl font-bold mb-4">Announcements</h1>
+    <h1 class="text-2xl font-bold mb-4">Barangay Bulletin</h1>
 
     <form method="GET" action="{{ route('posts.index') }}" class="flex flex-col sm:flex-row gap-2 mb-6">
         <input name="q" value="{{ request('q') }}" placeholder="Search title"
@@ -45,7 +45,4 @@
         {{ $posts->links() }}
     </div>
 
-    <p class="text-sm text-gray-600 mt-2">
-        Showing {{ $posts->firstItem() ?? 0 }}–{{ $posts->lastItem() ?? 0 }} of {{ $posts->total() }} posts
-    </p>
 @endsection
